@@ -15,11 +15,30 @@
 
 default_platform(:android)
 
+ENV["SLACK_URL"] = "https://hooks.slack.com/services/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"
+
+
 platform :android do
   desc "Runs all the tests"
   lane :test do
-    gradle(task: "test")
+    gradle(task:"test")
   end
+
+private_lane :upload_to_slack do |options|
+	file_path = lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH]
+	file_name = file_path.gsub(/\/.*\//,"")
+	sh "echo Uploading " + file_name + " to Slack"
+	sh "curl https://slack.com/api/files.upload -F token=\"xoxp-731733228049-739977885431-737653107540-7b7c3bbe9d3b83dc41d17b2ae650f325\" 
+-F 
+channels=\"#network\" -F title=\"" + file_name + "\" - F filename=\"" + file_name +"\" -F
+file=@" + file_path
+end
+
+lane :slackbuild do
+	gradle(task: "assembleRelease")
+	slack(message: "Build Successful")
+	upload_to_slack()
+end
 
   desc "Submit a new Beta Build to Crashlytics Beta"
   lane :beta do
