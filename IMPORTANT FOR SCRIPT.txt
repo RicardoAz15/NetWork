@@ -1,0 +1,16 @@
+
+Stuff for scrip
+
+run ruby installer
+reset command prompt
+install fastlane
+rewrite files
+install plugins in both projects
+ask to run 1 of the projects or both
+run 1 or both projects
+open slack
+open drive
+
+
+https://drive.google.com/drive/folders/1w6Q1lr42Bx3-AMxU5pNd_MkBACMOFtUv?usp=sharing
+https://join.slack.com/t/ricardo-set3240/shared_invite/enQtNzQ0MDYyODgxMDQ3LTQ5ZTc5OWUyYmNlODI4NTc0MDQwMTNkMTIyYmVmNDIzMDQ1NDkzMGQ2NDI5Mjk4NzY2NWRkYWM3YjNhNTU1M2E
