@@ -7,7 +7,7 @@ android {
         applicationId "com.example.retrofit_montepio"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 58
+        versionCode 63
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

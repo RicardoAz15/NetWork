@@ -1,5 +1,6 @@
 package com.example.volley_montepio;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.view.View;
@@ -32,6 +33,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -61,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         performRequest();
     }
 
+    @SuppressLint("DefaultLocale")
     private void initUI() {
 
         long timeElapsedStart_Get = request_response_get - request_start;
@@ -104,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
                     View snapview;
                     if ((snapview = snapHelper.findSnapView(recyclerView.getLayoutManager())) != null) {
 
-                        int position = recyclerView.getLayoutManager().getPosition(snapview);
+                        int position = (recyclerView.getLayoutManager()).getPosition(snapview);
 
                         dots[position].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),
                                 R.drawable.active_dot));
@@ -185,6 +188,7 @@ public class MainActivity extends AppCompatActivity {
                 };
 
         RequestQueue.RequestFinishedListener listener = new RequestQueue.RequestFinishedListener<Object>() {
+            @SuppressLint("DefaultLocale")
             @Override
             public void onRequestFinished(Request<Object> request) {
                 request_finish = SystemClock.elapsedRealtime();
