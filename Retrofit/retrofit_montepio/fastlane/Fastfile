@@ -15,29 +15,60 @@
 
 default_platform(:android)
 
-ENV["SLACK_URL"] = "https://hooks.slack.com/services/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"
-
-
+before_all do 
+	ENV["SLACK_URL"] = "https://hooks.slack.com/services/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"
+	ENV["ANDROID_HOME"] = "/Users/E5852/AppData/Local/Android/Sdk"
+end
+ 
 platform :android do
   desc "Runs all the tests"
   lane :test do
-    gradle(task:"test")
+      begin
+
+        instrumented_tests(
+            "avd_name":"test",
+            "avd_package":"system-images;android-25;google_apis;x86_64",
+            "avd_abi":"x86_64",
+            )
+
+        gradle(task:"test")
+
+        increment_version_code()
+
+        gradle(task: "assemble",
+                build_type: "Release"
+                )
+
+        apk = Actions.lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH]
+
+        upload_to_google_drive(
+            drive_keyfile:'Drive_key.json',
+            service_account:false,
+            folder_id:'1w6Q1lr42Bx3-AMxU5pNd_MkBACMOFtUv',
+            upload_files: [apk],
+         )
+      end
+    rescue=>exception
+        upload_to_slack(exception.message,false,"Error")
+    else
+        upload_to_slack("Complete ",true,"Success")
   end
 
-private_lane :upload_to_slack do |options|
-	file_path = lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH]
-	file_name = file_path.gsub(/\/.*\//,"")
-	sh "echo Uploading " + file_name + " to Slack"
-	sh "curl https://slack.com/api/files.upload -F token=\"xoxp-731733228049-739977885431-737653107540-7b7c3bbe9d3b83dc41d17b2ae650f325\" 
--F 
-channels=\"#network\" -F title=\"" + file_name + "\" - F filename=\"" + file_name +"\" -F
-file=@" + file_path
-end
 
-lane :slackbuild do
-	gradle(task: "assembleRelease")
-	slack(message: "Build Successful")
-	upload_to_slack()
+  def upload_to_slack(rMessage,isSuccess,isError)
+	slack(
+		message: isError,
+		success: isSuccess,
+		slack_url: "https://hooks.slack.com/services/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",
+		attachment_properties: {
+                	fields: [
+                  		 {
+	                	      	 title: isError,
+        		              	 value: rMessage
+                   		}
+               		]
+		}
+	)
 end
 
   desc "Submit a new Beta Build to Crashlytics Beta"

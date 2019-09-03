@@ -2,4 +2,6 @@
 #
 # Ensure this file is checked in to source control!
 
-gem 'fastlane-plugin-automated_test_emulator_run'
+gem 'fastlane-plugin-instrumented_tests'
+gem 'fastlane-plugin-increment_version_code'
+gem 'fastlane-plugin-google_drive'
