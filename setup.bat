@@ -1,6 +1,10 @@
 @ECHO OFF
 echo Installing Ruby
-START rubyinstaller-devkit-2.6.3-1-x64.exe
+start iexplore.exe https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.5.5-1/rubyinstaller-devkit-2.5.5-1-x64.exe
+PAUSE
+
+start bundle update
+
 echo. 
 echo Installing Fastlane
 gem install fastlane -NV
