@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.example.retrofit_montepio.ResponsePack.Objects.ContentToSend;
 import com.example.retrofit_montepio.ResponsePack.ResponseContent;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.util.HashMap;
@@ -40,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
     private MyService service;
     protected Call<ResponseContent> call;
     protected MyService.Request request;
-    private Map<String, String> headers;
 
     private long request_start;
     private long request_response_get;
@@ -60,19 +60,18 @@ public class MainActivity extends AppCompatActivity {
                 addConverterFactory(GsonConverterFactory.create()).build();
 
         request = retrofit.create(MyService.Request.class);
-        initHeaders();
-        performRequest();
+        Map<String, String> headers = new HashMap<>();
+        initHeaders(headers);
+        performRequest(headers);
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        //if (result == null)
-          //  performRequest();
     }
 
-    private void initHeaders() {
-        headers = new HashMap<>();
+    protected Map<String, String> initHeaders(Map<String, String> headers) {
+
         headers.put("ITSAPP-DEVICE", "ANDROIDPHONE");
         headers.put("ITSAPP-LANG", "pt-PT");
         headers.put("ITSAPP-SO", "24");
@@ -81,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
         headers.put("MGIP", "192.168.102.23");
         headers.put("MGMdwVersion", "5");
         headers.put("MGScreen", "LoginFragment");
+
+        return headers;
     }
 
     private void initUI(){
@@ -155,12 +156,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void performRequest() {
-
+    protected JsonObject jsonToSend(){
         ContentToSend contentToSend = new ContentToSend("MARKETING");
         Gson gson = new Gson();
-        call = request.getContent(headers,
-                new JsonParser().parse(gson.toJson(contentToSend)).getAsJsonObject());
+        return new JsonParser().parse(gson.toJson(contentToSend)).getAsJsonObject();
+    }
+
+    protected void performRequest(Map<String, String> headers) {
+
+        call = request.getContent(headers,jsonToSend());
         call.enqueue(new Callback<ResponseContent>() {
             @Override
             public void onResponse(Call<ResponseContent> call, Response<ResponseContent> response) {

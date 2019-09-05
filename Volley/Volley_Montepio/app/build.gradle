@@ -7,7 +7,7 @@ android {
         applicationId "com.example.volley_montepio"
         minSdkVersion 15
         targetSdkVersion 29
-        versionCode 3
+        versionCode 4
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         archivesBaseName = "Voley_Montepio"
@@ -31,5 +31,6 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     implementation 'com.google.code.gson:gson:2.8.5'
+    testImplementation 'org.mockito:mockito-core:3.0.0'
 
 }

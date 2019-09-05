@@ -58,7 +58,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         queue = Volley.newRequestQueue(this);
         Timer = findViewById(R.id.Timer);
-        initHeaders();
+        headers = new HashMap<>();
+        initHeaders(headers);
         request_start = SystemClock.elapsedRealtime();
         performRequest();
     }
@@ -118,16 +119,17 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void initHeaders() {
-        headers = new HashMap<>();
-        headers.put("ITSAPP-DEVICE", "ANDROIDPHONE");
-        headers.put("ITSAPP-LANG", "pt-PT");
-        headers.put("ITSAPP-SO", "24");
-        headers.put("ITSAPP-VER", "2.38");
-        headers.put("MGAppId", "Android-Mobile");
-        headers.put("MGIP", "192.168.102.23");
-        headers.put("MGMdwVersion", "5");
-        headers.put("MGScreen", "LoginFragment");
+    Map<String,String> initHeaders(Map<String, String> headers) {
+
+        this.headers.put("ITSAPP-DEVICE", "ANDROIDPHONE");
+        this.headers.put("ITSAPP-LANG", "pt-PT");
+        this.headers.put("ITSAPP-SO", "24");
+        this.headers.put("ITSAPP-VER", "2.38");
+        this.headers.put("MGAppId", "Android-Mobile");
+        this.headers.put("MGIP", "192.168.102.23");
+        this.headers.put("MGMdwVersion", "5");
+        this.headers.put("MGScreen", "LoginFragment");
+        return this.headers;
     }
 
     private void initDots(RecyclerView recyclerView) {
@@ -155,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void performRequest() {
+    void performRequest() {
 
         final ContentToSend contentToSend = new ContentToSend("MARKETING");
         final Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -165,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        String url = "http://mobile-montepio.itsector.local/public/contentByGroup";
+        String url = "http://192.168.100.49:1001/public/contentByGroup";
 
         JsonObjectRequest request =
                 new JsonObjectRequest(Request.Method.POST, url, contentToSendJson,
@@ -179,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
                         }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            System.out.println("ERROR");
+                            System.out.println(error.getMessage());
                         }
                         }) {
                         @Override

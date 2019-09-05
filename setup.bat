@@ -1,10 +1,8 @@
 @ECHO OFF
 
-start bundle update
-
-echo. 
 echo Installing Fastlane
-gem install fastlane -NV
+call gem install fastlane -NV
+pause
 echo. 
 echo Install plugins
 cd Retrofit\retrofit_montepio\
@@ -14,6 +12,7 @@ echo.
 echo Replacing files
 replace Extra_Files\gradle_helper.rb C:\Ruby26-x64\lib\ruby\gems\2.6.0\gems\fastlane-2.130.0\fastlane\lib\fastlane\helper 
 replace Extra_Files\instrumented_tests_action.rb C:\Ruby26-x64\lib\ruby\gems\2.6.0\gems\fastlane-plugin-instrumented_tests-0.2.0\lib\fastlane\plugin\instrumented_tests\actions
+
 
 echo Wich project do u want to test:
 echo 1:Retrofit
@@ -53,7 +52,9 @@ if "%input%" == "3" (
 	cd ..\..\
 )
 
-start iexplorer.exe https://drive.google.com/drive/folders/1w6Q1lr42Bx3-AMxU5pNd_MkBACMOFtUv?usp=sharing
-start iexplorer.exe https://ricardo-set3240.slack.com/messages/CMS8RA4BY
+
+start cmd /k iexplore.exe https://drive.google.com/drive/folders/1w6Q1lr42Bx3-AMxU5pNd_MkBACMOFtUv?usp=sharing 
+start iexplore.exe https://ricardo-set3240.slack.com/messages/CMS8RA4BY
+
 
 PAUSE
