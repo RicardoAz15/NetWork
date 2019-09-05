@@ -14,11 +14,11 @@ import retrofit2.http.POST;
 
 public final class MyService {
     public static final String API_URL =
-            "http://mobile-montepio.itsector.local/";
+            "http://";
 
     public interface Request {
 
-        @POST("public/contentByGroup")
+        @POST("192.168.100.49:1001")
         Call<ResponseContent> getContent(
                 @HeaderMap Map<String,String> headers,
                 @Body JsonObject objectToSend

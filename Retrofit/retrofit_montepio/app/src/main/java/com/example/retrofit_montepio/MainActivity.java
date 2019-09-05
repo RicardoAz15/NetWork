@@ -158,12 +158,9 @@ public class MainActivity extends AppCompatActivity {
     private void performRequest() {
 
         ContentToSend contentToSend = new ContentToSend("MARKETING");
-
         Gson gson = new Gson();
-
         call = request.getContent(headers,
                 new JsonParser().parse(gson.toJson(contentToSend)).getAsJsonObject());
-
         call.enqueue(new Callback<ResponseContent>() {
             @Override
             public void onResponse(Call<ResponseContent> call, Response<ResponseContent> response) {
@@ -175,11 +172,10 @@ public class MainActivity extends AppCompatActivity {
                 request_response_get = SystemClock.elapsedRealtime();
                 initUI();
             }
-
-        @Override
-        public void onFailure (Call < ResponseContent > call, Throwable t){
-            System.out.println("ERROR");
-        }
-    });
+            @Override
+            public void onFailure(Call<ResponseContent> call, Throwable t) {
+                System.out.println("ERROR");
+            }
+        });
 }
 }

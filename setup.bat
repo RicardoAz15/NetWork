@@ -1,7 +1,4 @@
 @ECHO OFF
-echo Installing Ruby
-start iexplore.exe https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-2.5.5-1/rubyinstaller-devkit-2.5.5-1-x64.exe
-PAUSE
 
 start bundle update
 

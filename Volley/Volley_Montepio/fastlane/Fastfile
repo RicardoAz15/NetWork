@@ -28,6 +28,8 @@ platform :android do
   lane :test do
       begin
 
+      gradle(task:"test")
+
       for i in 0..2 do
 
         puts "Testing android-" + (25 +i).to_s
@@ -38,7 +40,7 @@ platform :android do
                 "avd_abi":AVDs[i*2 + 1],
                 )
       end
-        gradle(task:"test")
+
 
         increment_version_code()
 

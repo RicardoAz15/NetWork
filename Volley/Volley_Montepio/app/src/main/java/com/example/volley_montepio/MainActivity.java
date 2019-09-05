@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         long timeElapsedStart_Get = request_response_get - request_start;
 
         Timer.setText(
-                String.format("Time to get response: %d",timeElapsedStart_Get));
+                String.format("Time to get response: %d", timeElapsedStart_Get));
 
         final RecyclerView recyclerView = findViewById(R.id.viewPagerContent);
 
@@ -154,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
                     R.drawable.active_dot));
         }
     }
+
     private void performRequest() {
 
         final ContentToSend contentToSend = new ContentToSend("MARKETING");
@@ -176,16 +177,18 @@ public class MainActivity extends AppCompatActivity {
                                 initUI();
                             }
                         }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
-                    }
-                }) {
-                    @Override
-                    public Map<String, String> getHeaders() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            System.out.println("ERROR");
+                        }
+                        }) {
+                        @Override
+                        public Map<String, String> getHeaders() {
                         return headers;
                     }
-                };
+                        };
+        queue.add(request);
+        queue.start();
 
         RequestQueue.RequestFinishedListener listener = new RequestQueue.RequestFinishedListener<Object>() {
             @SuppressLint("DefaultLocale")
@@ -193,12 +196,11 @@ public class MainActivity extends AppCompatActivity {
             public void onRequestFinished(Request<Object> request) {
                 request_finish = SystemClock.elapsedRealtime();
                 long timeElapsedStart_Stop = request_finish - request_start;
-                Timer.append(String.format("\nTime to finish: %d",timeElapsedStart_Stop));
+                Timer.append(String.format("\nTime to finish: %d", timeElapsedStart_Stop));
             }
         };
         queue.addRequestFinishedListener(listener);
-        queue.start();
-        queue.add(request);
+
     }
 }
 
