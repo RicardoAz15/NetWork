@@ -14,7 +14,7 @@ import retrofit2.http.POST;
 
 public final class MyService {
     public static final String API_URL =
-            "http://192.168.100.49:1001";
+            "http://mobile-montepio.itsector.local/";
 
     public interface Request {
 

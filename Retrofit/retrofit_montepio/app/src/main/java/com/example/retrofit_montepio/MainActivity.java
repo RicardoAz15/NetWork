@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import android.os.SystemClock;
@@ -20,9 +21,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -33,30 +37,26 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity {
 
     private ImageView[] dots;
-    private LinearLayout sliderDot;
-    private int dotsCount;
 
     private List<ResponseContent.ResponseContentResult> result;
 
-    private MyService service;
     protected Call<ResponseContent> call;
     protected MyService.Request request;
 
     private long request_start;
     private long request_response_get;
-    private long request_finish;
     private TextView Timer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         Timer = findViewById(R.id.Timer);
 
         request_start = SystemClock.elapsedRealtime();
-        service = new MyService();
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(service.API_URL).
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(MyService.API_URL).
                 addConverterFactory(GsonConverterFactory.create()).build();
 
         request = retrofit.create(MyService.Request.class);
@@ -84,19 +84,18 @@ public class MainActivity extends AppCompatActivity {
         return headers;
     }
 
+    @SuppressLint("DefaultLocale")
     private void initUI(){
 
         long timeElapsedStart_Get = request_response_get - request_start;
 
         Timer.setText(
-                String.format("Time to get response: %d",timeElapsedStart_Get));
+                String.format("Time to get response: %d", timeElapsedStart_Get));
 
         final RecyclerView recyclerView = findViewById(R.id.viewPagerContent);
 
         final Adapter viewHolderAdapter =
                 new Adapter(MainActivity.this, R.layout.content, result, result.size() + 1);
-
-        recyclerView.setAdapter(viewHolderAdapter);
 
         LinearLayoutManager layoutManager =  new LinearLayoutManager(MainActivity.this,
                 LinearLayoutManager.HORIZONTAL,
@@ -104,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerView.setLayoutManager(layoutManager);
 
+        recyclerView.setAdapter(viewHolderAdapter);
 
         final SnapHelper snapHelper = new LinearSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
@@ -112,17 +112,17 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            public void onScrollStateChanged(@NotNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
 
-                if(newState == recyclerView.SCROLL_STATE_SETTLING){
+                if(newState == RecyclerView.SCROLL_STATE_SETTLING){
 
                     for (ImageView dot : dots)
                         dot.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),
                                 R.drawable.not_active_dot));
 
-                    int position = recyclerView.getLayoutManager().getPosition(
-                            snapHelper.findSnapView(recyclerView.getLayoutManager()));
+                    int position = Objects.requireNonNull(recyclerView.getLayoutManager()).getPosition(
+                            Objects.requireNonNull(snapHelper.findSnapView(recyclerView.getLayoutManager())));
 
                     dots[position].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),
                             R.drawable.active_dot));
@@ -132,13 +132,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initDots(RecyclerView recyclerView){
-        sliderDot = findViewById(R.id.SliderDots);
+        LinearLayout sliderDot = findViewById(R.id.SliderDots);
 
-        dotsCount = recyclerView.getAdapter().getItemCount();
+        int dotsCount = Objects.requireNonNull(recyclerView.getAdapter()).getItemCount();
 
         dots = new ImageView[dotsCount];
 
-        for (int i=0;i<dotsCount;i++) {
+        for (int i = 0; i< dotsCount; i++) {
             dots[i] = new ImageView(MainActivity.this);
             dots[i].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),
                     R.drawable.not_active_dot));
@@ -167,8 +167,9 @@ public class MainActivity extends AppCompatActivity {
         call = request.getContent(headers,jsonToSend());
         call.enqueue(new Callback<ResponseContent>() {
             @Override
-            public void onResponse(Call<ResponseContent> call, Response<ResponseContent> response) {
+            public void onResponse(@NotNull Call<ResponseContent> call, @NotNull Response<ResponseContent> response) {
 
+                assert response.body() != null;
                 if (response.body().getResult().getContentResult() == null)
                     System.exit(0);
 
@@ -177,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
                 initUI();
             }
             @Override
-            public void onFailure(Call<ResponseContent> call, Throwable t) {
+            public void onFailure(@NotNull Call<ResponseContent> call, @NotNull Throwable t) {
                 System.out.println("ERROR");
             }
         });

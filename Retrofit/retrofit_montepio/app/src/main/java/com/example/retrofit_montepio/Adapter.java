@@ -60,12 +60,9 @@ public class Adapter extends
             Glide.with(activity).load(link).
                     apply(RequestOptions.circleCropTransform()).into(holder.image);
             final String link2 = holder.contentResult.getLink();
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link2));
-                    activity.startActivity(browserIntent);
-                }
+            holder.itemView.setOnClickListener(view -> {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link2));
+                activity.startActivity(browserIntent);
             });
         } else {
             holder.title.setText("");
