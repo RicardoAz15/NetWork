@@ -57,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
 
         request_start_timer = SystemClock.elapsedRealtime();
 
-
         Retrofit retrofit = new Retrofit.Builder().baseUrl(MyService.API_URL).
                 addConverterFactory(GsonConverterFactory.create()).build();
 
@@ -84,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @SuppressLint("DefaultLocale")
-    private void initUI(){
+    private void initUI(List<ResponseContent.ResponseContentResult> result){
 
         long timeElapsedStart_Get = request_response_get_timer - request_start_timer;
         Timer.setText(
@@ -93,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
         final RecyclerView recyclerView = findViewById(R.id.viewPagerContent);
         final Adapter viewHolderAdapter =
-                new Adapter(MainActivity.this, R.layout.content, result, result.size() + 1);
+                new Adapter(MainActivity.this, R.layout.content, result, result.size());
 
         final LinearLayoutManager layoutManager =  new LinearLayoutManager(MainActivity.this,
                 LinearLayoutManager.HORIZONTAL,
@@ -173,9 +172,10 @@ public class MainActivity extends AppCompatActivity {
                 if (response.body().getResult().getContentResult() == null)
                     System.exit(0);
 
-                result = response.body().getResult().getContentResult();
+                final List<ResponseContent.ResponseContentResult> result =
+                        response.body().getResult().getContentResult();
                 request_response_get_timer = SystemClock.elapsedRealtime();
-                initUI();
+                initUI(result);
             }
             @Override
             public void onFailure(@NotNull Call<ResponseContent> call, @NotNull Throwable t) {

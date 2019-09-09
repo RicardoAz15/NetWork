@@ -33,7 +33,6 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -42,30 +41,32 @@ public class MainActivity extends AppCompatActivity {
 
     private ImageView[] dots;
 
-    private ResponseContent result;
-
-    private Map<String, String> headers;
-
     //Time Measures
     private long request_start;
     private long request_response_get;
     private long request_finish;
     private TextView Timer;
+    private Map<String, String> headers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        queue = Volley.newRequestQueue(this);
+
+        queue = Volley.newRequestQueue(getApplicationContext());
+
         Timer = findViewById(R.id.Timer);
-        headers = new HashMap<>();
-        initHeaders(headers);
+
+        Map<String, String> headers = new HashMap<>();
+        this.headers = initHeaders(headers);
+
         request_start = SystemClock.elapsedRealtime();
+
         performRequest();
     }
 
     @SuppressLint("DefaultLocale")
-    private void initUI() {
+    private void initUI(ResponseContent result) {
 
         long timeElapsedStart_Get = request_response_get - request_start;
 
@@ -79,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
         final Adapter viewHolderAdapter =
                 new Adapter(MainActivity.this,
-                        R.layout.content, contentResult, contentResult.size() + 1);
+                        R.layout.content, contentResult, contentResult.size());
 
         recyclerView.setAdapter(viewHolderAdapter);
 
@@ -105,10 +106,10 @@ public class MainActivity extends AppCompatActivity {
                         dot.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),
                                 R.drawable.not_active_dot));
 
-                    View snapview;
-                    if ((snapview = snapHelper.findSnapView(recyclerView.getLayoutManager())) != null) {
+                    View snapView;
+                    if ((snapView = snapHelper.findSnapView(recyclerView.getLayoutManager())) != null) {
 
-                        int position = (recyclerView.getLayoutManager()).getPosition(snapview);
+                        int position = (recyclerView.getLayoutManager()).getPosition(snapView);
 
                         dots[position].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),
                                 R.drawable.active_dot));
@@ -121,15 +122,15 @@ public class MainActivity extends AppCompatActivity {
 
     Map<String,String> initHeaders(Map<String, String> headers) {
 
-        this.headers.put("ITSAPP-DEVICE", "ANDROIDPHONE");
-        this.headers.put("ITSAPP-LANG", "pt-PT");
-        this.headers.put("ITSAPP-SO", "24");
-        this.headers.put("ITSAPP-VER", "2.38");
-        this.headers.put("MGAppId", "Android-Mobile");
-        this.headers.put("MGIP", "192.168.102.23");
-        this.headers.put("MGMdwVersion", "5");
-        this.headers.put("MGScreen", "LoginFragment");
-        return this.headers;
+        headers.put("ITSAPP-DEVICE", "ANDROIDPHONE");
+        headers.put("ITSAPP-LANG", "pt-PT");
+        headers.put("ITSAPP-SO", "24");
+        headers.put("ITSAPP-VER", "2.38");
+        headers.put("MGAppId", "Android-Mobile");
+        headers.put("MGIP", "192.168.102.23");
+        headers.put("MGMdwVersion", "5");
+        headers.put("MGScreen", "LoginFragment");
+        return headers;
     }
 
     private void initDots(RecyclerView recyclerView) {
@@ -159,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
 
     void performRequest() {
 
+
         final ContentToSend contentToSend = new ContentToSend("MARKETING");
         final Gson gson = new GsonBuilder().setPrettyPrinting().create();
         JSONObject contentToSendJson = null;
@@ -167,21 +169,22 @@ public class MainActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        String url = "http://192.168.100.49:1001/public/contentByGroup";
+        String url = "http://mobile-montepio.itsector.local/public/contentByGroup";
 
         JsonObjectRequest request =
                 new JsonObjectRequest(Request.Method.POST, url, contentToSendJson,
                         new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
+                                final ResponseContent result;
                                 result = gson.fromJson(response.toString(), ResponseContent.class);
                                 request_response_get = SystemClock.elapsedRealtime();
-                                initUI();
+                                initUI(result);
                             }
                         }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            System.out.println(error.getMessage());
+                            MainActivity.super.onRestart();
                         }
                         }) {
                         @Override
@@ -189,8 +192,10 @@ public class MainActivity extends AppCompatActivity {
                         return headers;
                     }
                         };
-        queue.add(request);
+
         queue.start();
+        queue.add(request);
+
 
         RequestQueue.RequestFinishedListener listener = new RequestQueue.RequestFinishedListener<Object>() {
             @SuppressLint("DefaultLocale")

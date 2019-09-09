@@ -7,10 +7,10 @@ android {
         applicationId "com.example.retrofit_montepio"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 69
+        versionCode 70
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        archivesBaseName = "Retrofit_Montepio"
+        archivesBaseName = "Retrofit_Montepio_" + versionCode
         multiDexEnabled true
 
     }

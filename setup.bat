@@ -54,7 +54,7 @@ if "%input%" == "3" (
 
 PAUSE
 
-start cmd /k iexplore.exe https://drive.google.com/drive/folders/1w6Q1lr42Bx3-AMxU5pNd_MkBACMOFtUv?usp=sharing 
+start iexplore.exe https://drive.google.com/drive/folders/1w6Q1lr42Bx3-AMxU5pNd_MkBACMOFtUv?usp=sharing 
 start iexplore.exe https://ricardo-set3240.slack.com/messages/CMS8RA4BY
 
 

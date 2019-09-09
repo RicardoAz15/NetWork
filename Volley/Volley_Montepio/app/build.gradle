@@ -7,10 +7,10 @@ android {
         applicationId "com.example.volley_montepio"
         minSdkVersion 15
         targetSdkVersion 29
-        versionCode 5
+        versionCode 6
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        archivesBaseName = "Voley_Montepio"
+        archivesBaseName = "Voley_Montepio_" + versionCode
     }
     buildTypes {
         release {
