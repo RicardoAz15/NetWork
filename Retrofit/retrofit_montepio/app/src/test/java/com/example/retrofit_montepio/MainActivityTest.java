@@ -2,15 +2,13 @@ package com.example.retrofit_montepio;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.stubbing.Answer;
-
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class MainActivityTest {
 
@@ -37,6 +35,7 @@ public class MainActivityTest {
 
         when(activity_to_test.initHeaders(actual)).thenReturn(expected);
     }
+
 
     @Test
     public void verifyPerformRequest(){

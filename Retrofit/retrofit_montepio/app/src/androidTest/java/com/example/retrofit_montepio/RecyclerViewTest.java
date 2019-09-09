@@ -3,9 +3,6 @@ package com.example.retrofit_montepio;
 
 import android.content.Intent;
 
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.test.espresso.UiController;
-import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner;
@@ -31,9 +28,7 @@ public class RecyclerViewTest {
     @Test
     public void checkIfItemDisplay() {
 
-        int total = ((RecyclerView) activityRule.getActivity().findViewById(R.id.viewPagerContent)).getAdapter().getItemCount();
-
-        for(int i = 0;i<total;i++){
+        for(int i = 0;i<6;i++){
             onView(withId(R.id.viewPagerContent)).
                     perform(RecyclerViewActions.scrollToPosition(i)).
                     check(matches(isDisplayed())).perform(click());

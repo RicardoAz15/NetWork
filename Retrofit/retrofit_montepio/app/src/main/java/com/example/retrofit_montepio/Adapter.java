@@ -33,7 +33,6 @@ public class Adapter extends
     private int layout;
     private View view;
 
-
     public Adapter(AppCompatActivity activity, int layout,
                    List<ResponseContent.ResponseContentResult> resultList, Integer index) {
         this.activity = activity;

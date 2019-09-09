@@ -43,8 +43,8 @@ public class MainActivity extends AppCompatActivity {
     protected Call<ResponseContent> call;
     protected MyService.Request request;
 
-    private long request_start;
-    private long request_response_get;
+    private long request_start_timer;
+    private long request_response_get_timer;
     private TextView Timer;
 
     @Override
@@ -55,19 +55,18 @@ public class MainActivity extends AppCompatActivity {
 
         Timer = findViewById(R.id.Timer);
 
-        request_start = SystemClock.elapsedRealtime();
+        request_start_timer = SystemClock.elapsedRealtime();
+
+
         Retrofit retrofit = new Retrofit.Builder().baseUrl(MyService.API_URL).
                 addConverterFactory(GsonConverterFactory.create()).build();
 
         request = retrofit.create(MyService.Request.class);
+
         Map<String, String> headers = new HashMap<>();
         initHeaders(headers);
-        performRequest(headers);
-    }
 
-    @Override
-    protected void onRestart() {
-        super.onRestart();
+        performRequest(headers);
     }
 
     protected Map<String, String> initHeaders(Map<String, String> headers) {
@@ -87,22 +86,20 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("DefaultLocale")
     private void initUI(){
 
-        long timeElapsedStart_Get = request_response_get - request_start;
-
+        long timeElapsedStart_Get = request_response_get_timer - request_start_timer;
         Timer.setText(
                 String.format("Time to get response: %d", timeElapsedStart_Get));
 
-        final RecyclerView recyclerView = findViewById(R.id.viewPagerContent);
 
+        final RecyclerView recyclerView = findViewById(R.id.viewPagerContent);
         final Adapter viewHolderAdapter =
                 new Adapter(MainActivity.this, R.layout.content, result, result.size() + 1);
 
-        LinearLayoutManager layoutManager =  new LinearLayoutManager(MainActivity.this,
+        final LinearLayoutManager layoutManager =  new LinearLayoutManager(MainActivity.this,
                 LinearLayoutManager.HORIZONTAL,
                 false);
 
         recyclerView.setLayoutManager(layoutManager);
-
         recyclerView.setAdapter(viewHolderAdapter);
 
         final SnapHelper snapHelper = new LinearSnapHelper();
@@ -132,9 +129,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initDots(RecyclerView recyclerView){
+
+        //assert(recyclerView != null);
+
         LinearLayout sliderDot = findViewById(R.id.SliderDots);
 
-        int dotsCount = Objects.requireNonNull(recyclerView.getAdapter()).getItemCount();
+        int dotsCount = (recyclerView.getAdapter()).getItemCount();
 
         dots = new ImageView[dotsCount];
 
@@ -174,12 +174,12 @@ public class MainActivity extends AppCompatActivity {
                     System.exit(0);
 
                 result = response.body().getResult().getContentResult();
-                request_response_get = SystemClock.elapsedRealtime();
+                request_response_get_timer = SystemClock.elapsedRealtime();
                 initUI();
             }
             @Override
             public void onFailure(@NotNull Call<ResponseContent> call, @NotNull Throwable t) {
-                System.out.println("ERROR");
+                MainActivity.super.onRestart();
             }
         });
 }
