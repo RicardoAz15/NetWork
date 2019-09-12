@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
 import android.annotation.SuppressLint;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import android.os.SystemClock;
@@ -18,21 +19,26 @@ import android.widget.TextView;
 import com.example.retrofit_montepio.ResponsePack.Objects.ContentToSend;
 import com.example.retrofit_montepio.ResponsePack.ResponseContent;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 import retrofit2.Call;
+
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -83,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @SuppressLint("DefaultLocale")
-    private void initUI(List<ResponseContent.ResponseContentResult> result){
+    private void initUI(List<ResponseContent.ResponseContentResult> result) {
 
         long timeElapsedStart_Get = request_response_get_timer - request_start_timer;
         Timer.setText(
@@ -94,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
         final Adapter viewHolderAdapter =
                 new Adapter(MainActivity.this, R.layout.content, result, result.size());
 
-        final LinearLayoutManager layoutManager =  new LinearLayoutManager(MainActivity.this,
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this,
                 LinearLayoutManager.HORIZONTAL,
                 false);
 
@@ -111,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
             public void onScrollStateChanged(@NotNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
 
-                if(newState == RecyclerView.SCROLL_STATE_SETTLING){
+                if (newState == RecyclerView.SCROLL_STATE_SETTLING) {
 
                     for (ImageView dot : dots)
                         dot.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),
@@ -127,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void initDots(RecyclerView recyclerView){
+    private void initDots(RecyclerView recyclerView) {
 
         //assert(recyclerView != null);
 
@@ -137,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
 
         dots = new ImageView[dotsCount];
 
-        for (int i = 0; i< dotsCount; i++) {
+        for (int i = 0; i < dotsCount; i++) {
             dots[i] = new ImageView(MainActivity.this);
             dots[i].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),
                     R.drawable.not_active_dot));
@@ -155,15 +161,49 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    protected JsonObject jsonToSend(){
+    protected JsonObject jsonToSend() {
         ContentToSend contentToSend = new ContentToSend("MARKETING");
         Gson gson = new Gson();
         return new JsonParser().parse(gson.toJson(contentToSend)).getAsJsonObject();
     }
 
+
     protected void performRequest(Map<String, String> headers) {
 
-        call = request.getContent(headers,jsonToSend());
+        call = request.getContent(headers, jsonToSend());
+
+        //synchronous request
+        /*
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void,Void,ResponseContent> task =
+                new AsyncTask<Void, Void, ResponseContent>() {
+            @Override
+            protected ResponseContent doInBackground(Void... voids) {
+                ResponseContent content = null;
+                try {
+                    content = call.execute().body();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    onRestart();
+                }
+                return content;
+            }
+        };
+
+        try {
+            result = task.execute().get().getResult().getContentResult();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        request_response_get_timer = SystemClock.elapsedRealtime();
+
+        initUI(result);
+        */
+
+        //Asynchronous request
+
         call.enqueue(new Callback<ResponseContent>() {
             @Override
             public void onResponse(@NotNull Call<ResponseContent> call, @NotNull Response<ResponseContent> response) {
@@ -177,10 +217,11 @@ public class MainActivity extends AppCompatActivity {
                 request_response_get_timer = SystemClock.elapsedRealtime();
                 initUI(result);
             }
+
             @Override
             public void onFailure(@NotNull Call<ResponseContent> call, @NotNull Throwable t) {
                 MainActivity.super.onRestart();
             }
         });
-}
+    }
 }
