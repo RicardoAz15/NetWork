@@ -144,7 +144,7 @@ module Fastlane
 
 
 
-        adb_path = "#{params[:sdk_path]}/platform-tools/adb.exe"
+        adb_path = "C:/#{params[:sdk_path]}/platform-tools/adb.exe"
 
         raise "Unable to find adb in #{adb_path}" unless File.file?(adb_path)
 	

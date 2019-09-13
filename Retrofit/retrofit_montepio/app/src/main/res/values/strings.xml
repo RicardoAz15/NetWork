@@ -5,6 +5,6 @@
 
     <string name="netWork_error_message">Não foi possível executar o pedido verifique a sua conexão e reinicie a aplicação</string>
 
-    <string name="timerTv_message">Time to get response: %1$f </string>
+    <string name="timerTv_message">Time to get response: %1$q</string>
 
 </resources>

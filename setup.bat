@@ -32,6 +32,10 @@ echo Replacing files
 replace Extra_Files\gradle_helper.rb C:\Ruby26-x64\lib\ruby\gems\2.6.0\gems\fastlane-2.131.0\fastlane\lib\fastlane\helper
 replace Extra_Files\instrumented_tests_action.rb C:\Ruby26-x64\lib\ruby\gems\2.6.0\gems\fastlane-plugin-instrumented_tests-0.2.0\lib\fastlane\plugin\instrumented_tests\actions
 
+for /f "tokens=2-7 delims=\\" %%I in ("%ANDROID_SDK_ROOT%") do set ANDROID_SDK_ROOT=/%%I/%%J/%%K/%%L/%%M/%%N
+
+echo %ANDROID_SDK_ROOT%
+
 echo.
 echo Wich project do u want to test:
 echo 1:Retrofit
@@ -42,8 +46,8 @@ set /p input= "Response: "
 
 echo.
 
-set windowBoll= "true"
-echo Deseja janela no emulador?
+set windowBoll="true"
+echo Window on emulador?
 set /p window= "[y/n] "
 
 if /i "%window%" == "y" set windowBoll="false"
@@ -52,7 +56,7 @@ if "%input%" == "1" (
 	echo.
 	echo Testing Retrofit
 	cd Retrofit\retrofit_montepio\
-	call fastlane test window:%windowBoll% sdk:%ANDROID_SDK_ROOT%
+	call fastlane test window:%windowBoll% sdk:%ANDROID_SDK_ROOT% 
 	cd ..\..\
 )
 if "%input%" == "2" (

@@ -122,8 +122,8 @@ public class MainActivity extends AppCompatActivity {
      */
     private void initUI(List<ResponseContent.ResponseContentResult> result) {
 
-        long timeElapsedStart_Get = request_response_get_timer - request_start_timer;
-        timerTv.setText(getString(R.string.timerTv_message,timeElapsedStart_Get));   //TODO: devias ter todas as strings no resources
+        //long timeElapsedStart_Get = request_response_get_timer - request_start_timer;
+        //timerTv.setText(getResources().getString(R.string.timerTv_message,timeElapsedStart_Get));   //TODO: devias ter todas as strings no resources
 
         RecyclerView recyclerView = initRecyclerView(result);
 
@@ -263,12 +263,10 @@ public class MainActivity extends AppCompatActivity {
         call.enqueue(new Callback<ResponseContent>() {
             @Override
             public void onResponse(@NotNull Call<ResponseContent> call, @NotNull Response<ResponseContent> response) {
-
                 if (response.body() == null)
                 {
-                    ((TextView) findViewById(R.id.description)) //TODO: não mates a app sem dar feedback ao user
+                    ((TextView) findViewById(R.id.timerTv)) //TODO: não mates a app sem dar feedback ao user
                             .setText(R.string.netWork_error_message);
-                    System.exit(0);
                 }
                 else {
                     final List<ResponseContent.ResponseContentResult> result =
@@ -280,9 +278,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(@NotNull Call<ResponseContent> call, @NotNull Throwable t) {
-                ((TextView) findViewById(R.id.description))
+                ((TextView) findViewById(R.id.timerTv))
                         .setText(R.string.netWork_error_message);
-                System.exit(0);
             }
         });
     }
