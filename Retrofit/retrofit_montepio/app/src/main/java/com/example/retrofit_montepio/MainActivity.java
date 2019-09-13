@@ -53,9 +53,9 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        Timer = findViewById(R.id.Timer);
+        Timer = findViewById(R.id.Timer); //TODO: este nome está mal dado, isto não é um timer, é uma TextView, devias ter-lhe chamado p.e. timerTv
 
-        request_start_timer = SystemClock.elapsedRealtime();
+        request_start_timer = SystemClock.elapsedRealtime();        //TODO: não foi aqui que iniciaste o request ;)
 
         Retrofit retrofit = new Retrofit.Builder().baseUrl(MyService.API_URL).
                 addConverterFactory(GsonConverterFactory.create()).build();
@@ -68,9 +68,10 @@ public class MainActivity extends AppCompatActivity {
         performRequest(headers);
     }
 
+    //TODO: podias ter usado o javadoc
     protected Map<String, String> initHeaders(Map<String, String> headers) {
 
-        headers.put("ITSAPP-DEVICE", "ANDROIDPHONE");
+        headers.put("ITSAPP-DEVICE", "ANDROIDPHONE");           //TODO: podias ter usado keys, pessoalmente não gosto de ver strings no meio do código
         headers.put("ITSAPP-LANG", "pt-PT");
         headers.put("ITSAPP-SO", "24");
         headers.put("ITSAPP-VER", "2.38");
@@ -87,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
         long timeElapsedStart_Get = request_response_get_timer - request_start_timer;
         Timer.setText(
-                String.format("Time to get response: %d", timeElapsedStart_Get));
+                String.format("Time to get response: %d", timeElapsedStart_Get));   //TODO: devias ter todas as strings no resources
 
 
         final RecyclerView recyclerView = findViewById(R.id.viewPagerContent);
@@ -133,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
 
         LinearLayout sliderDot = findViewById(R.id.SliderDots);
 
-        int dotsCount = (recyclerView.getAdapter()).getItemCount();
+        int dotsCount = (recyclerView.getAdapter()).getItemCount();     //TODO: devias validar sempre os null, aproveita as dicas do IDE
 
         dots = new ImageView[dotsCount];
 
@@ -170,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
 
                 assert response.body() != null;
                 if (response.body().getResult().getContentResult() == null)
-                    System.exit(0);
+                    System.exit(0);                         //TODO: não mates a app sem dar feedback ao user
 
                 final List<ResponseContent.ResponseContentResult> result =
                         response.body().getResult().getContentResult();

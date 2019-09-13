@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
 
             sliderDot.addView(dots[i], params);
 
-            dots[0].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),
+            dots[0].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), //TODO: isto devia estar fora do for, e devias validar if(i==0) faz esta linha, elsa faz o resto
                     R.drawable.active_dot));
         }
     }
@@ -154,7 +154,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onRequestFailure(SpiceException spiceException) {
             //update UI
-            System.out.println("NOT CONNECTED");
+            System.out.println("NOT CONNECTED");        //TODO: como é que sabes que é esta excepção?
+
+            System.out.println(spiceException.getMessage()); //mt melhor assim :) tb devias dar sempre feedback ao user, pelo menos uma mensagem genérica.
         }
 
         @Override

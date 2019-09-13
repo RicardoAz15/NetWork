@@ -1,6 +1,7 @@
 @ECHO OFF
 
-echo Installing Fastlane
+echo Installing Fastlane	
+REM Devias validar se o fastlane já está instalado ou não
 call gem install fastlane -NV
 pause
 echo. 
@@ -13,6 +14,7 @@ echo Replacing files
 replace Extra_Files\gradle_helper.rb C:\Ruby26-x64\lib\ruby\gems\2.6.0\gems\fastlane-2.130.0\fastlane\lib\fastlane\helper 
 replace Extra_Files\instrumented_tests_action.rb C:\Ruby26-x64\lib\ruby\gems\2.6.0\gems\fastlane-plugin-instrumented_tests-0.2.0\lib\fastlane\plugin\instrumented_tests\actions
 
+REM Como sabes que estes ficheiros acima existem nesta path?
 
 echo Wich project do u want to test:
 echo 1:Retrofit
