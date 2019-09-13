@@ -17,7 +17,6 @@ default_platform(:android)
 
 before_all do 
 	ENV["SLACK_URL"] = "https://hooks.slack.com/services/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"
-	ENV["ANDROID_HOME"] = "/Users/E5852/AppData/Local/Android/Sdk"
 	AVDs = ["system-images;android-25;google_apis;x86_64","x86_64",
              "system-images;android-26;google_apis;x86_64","x86_64",
              "system-images;android-27;google_apis;x86","x86"]
@@ -35,6 +34,7 @@ platform :android do
         puts "Testing android-" + (25 +i).to_s
 
             instrumented_tests(
+		"sdk_path":options[:sdk],
                 "avd_name":"test" + i.to_s,
                 "avd_package":AVDs[i*2],
                 "avd_abi":AVDs[i*2 + 1],
