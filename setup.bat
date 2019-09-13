@@ -52,14 +52,14 @@ if "%input%" == "1" (
 	echo.
 	echo Testing Retrofit
 	cd Retrofit\retrofit_montepio\
-	call fastlane test window:%windowBoll%
+	call fastlane test window:%windowBoll% sdk:%ANDROID_SDK_ROOT%
 	cd ..\..\
 )
 if "%input%" == "2" (
 	echo.
 	echo Testing Volley
 	cd Volley\Volley_Montepio\
-	call fastlane test window:%windowBoll%
+	call fastlane test window:%windowBoll% sdk:%ANDROID_SDK_ROOT%
 	cd ..\..\
 )
 if "%input%" == "3" (
@@ -68,14 +68,14 @@ if "%input%" == "3" (
 	echo.
 	echo Testing Retrofit
 	cd Retrofit\retrofit_montepio\
-	call fastlane test window:%windowBoll%
+	call fastlane test window:%windowBoll% sdk:%ANDROID_SDK_ROOT%
 	cd ..\..\
 	echo.
 	PAUSE
 	echo.
 	echo Testing Retrofit
 	cd Volley\Volley_Montepio\
-	call fastlane test window:%windowBoll%
+	call fastlane test window:%windowBoll% sdk:%ANDROID_SDK_ROOT%
 	cd ..\..\
 )
 
