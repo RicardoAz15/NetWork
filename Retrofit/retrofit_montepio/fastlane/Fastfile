@@ -34,7 +34,7 @@ platform :android do
         puts "Testing android-" + (25 +i).to_s
 
             instrumented_tests(
-                "sdk_path":options[:sdk]
+                "sdk_path":options[:sdk],
                 "avd_name":"test" + i.to_s,
                 "avd_package":AVDs[i*2],
                 "avd_abi":AVDs[i*2 + 1],
