@@ -15,7 +15,7 @@
 
 default_platform(:android)
 
-before_all do 
+before_all do
 	ENV["SLACK_URL"] = "https://hooks.slack.com/services/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"
 	ENV["ANDROID_HOME"] = "/Users/E5852/AppData/Local/Android/Sdk"
 	AVDs = ["system-images;android-25;google_apis;x86_64","x86_64",
@@ -25,7 +25,7 @@ end
  
 platform :android do
   desc "Runs all the tests"
-  lane :test do
+  lane :test do |options|
       begin
 
       gradle(task:"test")
@@ -38,6 +38,7 @@ platform :android do
                 "avd_name":"test" + i.to_s,
                 "avd_package":AVDs[i*2],
                 "avd_abi":AVDs[i*2 + 1],
+                "avd_hide":options[:window],
                 )
          end
 

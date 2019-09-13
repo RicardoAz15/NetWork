@@ -1,9 +1,11 @@
 package com.example.volley_montepio;
 
 import android.annotation.SuppressLint;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.view.View;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -18,14 +20,17 @@ import androidx.recyclerview.widget.SnapHelper;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.Volley;
 import com.example.volley_montepio.ResponsePack.Objects.ContentToSend;
 import com.example.volley_montepio.ResponsePack.ResponseContent;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,6 +38,9 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -53,16 +61,31 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        queue = Volley.newRequestQueue(getApplicationContext());
+        configQueue();
 
         Timer = findViewById(R.id.Timer);
 
-        Map<String, String> headers = new HashMap<>();
+        headers = new HashMap<>();
         this.headers = initHeaders(headers);
 
         request_start = SystemClock.elapsedRealtime();
 
         performRequest();
+    }
+
+    private void configQueue() {
+        queue = Volley.newRequestQueue(getApplicationContext());
+
+        RequestQueue.RequestFinishedListener<Object> listener = new RequestQueue.RequestFinishedListener<Object>() {
+            @SuppressLint("DefaultLocale")
+            @Override
+            public void onRequestFinished(Request<Object> request) {
+                request_finish = SystemClock.elapsedRealtime();
+                long timeElapsedStart_Stop = request_finish - request_start;
+                Timer.append(String.format("\nTime to finish: %d", timeElapsedStart_Stop));
+            }
+        };
+        queue.addRequestFinishedListener(listener);
     }
 
     @SuppressLint("DefaultLocale")
@@ -120,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    Map<String,String> initHeaders(Map<String, String> headers) {
+    Map<String, String> initHeaders(Map<String, String> headers) {
 
         headers.put("ITSAPP-DEVICE", "ANDROIDPHONE");
         headers.put("ITSAPP-LANG", "pt-PT");
@@ -160,7 +183,6 @@ public class MainActivity extends AppCompatActivity {
 
     void performRequest() {
 
-
         final ContentToSend contentToSend = new ContentToSend("MARKETING");
         final Gson gson = new GsonBuilder().setPrettyPrinting().create();
         JSONObject contentToSendJson = null;
@@ -171,9 +193,59 @@ public class MainActivity extends AppCompatActivity {
         }
         String url = "http://mobile-montepio.itsector.local/public/contentByGroup";
 
+        //Synchronous Request
+        /*
+        final RequestFuture<JSONObject> requestFuture = RequestFuture.newFuture();
+
         JsonObjectRequest request =
-                new JsonObjectRequest(Request.Method.POST, url, contentToSendJson,
-                        new Response.Listener<JSONObject>() {
+                new JsonObjectRequest(Request.Method.POST, url, contentToSendJson,requestFuture, requestFuture) {
+                    @Override
+                    public Map<String, String> getHeaders() {
+                        return headers;
+                    }
+                };
+
+        queue.start();
+        queue.add(request);
+
+        requestFuture.setRequest(request);
+
+        @SuppressLint("StaticFieldLeak") AsyncTask task =
+                new AsyncTask<Object, Void,ResponseContent>() {
+
+                    @Override
+                    protected ResponseContent doInBackground(Object... objects) {
+                        String response = null;
+                        try {
+                            response = requestFuture.get(10,TimeUnit.SECONDS).toString();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        } catch (TimeoutException e) {
+                            e.printStackTrace();
+                        }
+
+                        ResponseContent responseContent = gson.fromJson(response,ResponseContent.class);
+
+                        return responseContent;
+                    }
+
+                    @Override
+                    protected void onPostExecute(ResponseContent responseContent){
+                        request_response_get = SystemClock.elapsedRealtime();
+                        initUI(responseContent);
+                    }
+                };
+
+        task.execute();
+        */
+
+
+        // Asynchronous Request
+
+        JsonObjectRequest request =
+                new JsonObjectRequest(Request.Method.POST, url, contentToSendJson,new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
                                 final ResponseContent result;
@@ -197,18 +269,7 @@ public class MainActivity extends AppCompatActivity {
         queue.add(request);
 
 
-        RequestQueue.RequestFinishedListener listener = new RequestQueue.RequestFinishedListener<Object>() {
-            @SuppressLint("DefaultLocale")
-            @Override
-            public void onRequestFinished(Request<Object> request) {
-                request_finish = SystemClock.elapsedRealtime();
-                long timeElapsedStart_Stop = request_finish - request_start;
-                Timer.append(String.format("\nTime to finish: %d", timeElapsedStart_Stop));
-            }
-        };
-        queue.addRequestFinishedListener(listener);
-
+                }
     }
-}
 
 

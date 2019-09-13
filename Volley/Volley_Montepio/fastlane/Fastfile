@@ -25,7 +25,7 @@ end
  
 platform :android do
   desc "Runs all the tests"
-  lane :test do
+  lane :test do |options|
       begin
 
       gradle(task:"test")
@@ -38,6 +38,7 @@ platform :android do
                 "avd_name":"test" + i.to_s,
                 "avd_package":AVDs[i*2],
                 "avd_abi":AVDs[i*2 + 1],
+                "avd_hide":options[:window],
                 )
       end
 
