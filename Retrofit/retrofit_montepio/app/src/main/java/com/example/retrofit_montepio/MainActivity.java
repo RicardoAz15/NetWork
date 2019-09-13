@@ -7,8 +7,6 @@ import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
-import android.annotation.SuppressLint;
-
 import android.os.Bundle;
 
 import android.os.SystemClock;
@@ -98,6 +96,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //TODO: podias ter usado o javadoc
+
+    /**
+     * Metodo usado para inicializar os Headers a serem enviado posteriormente no request
+     * @param headers Headers a serem inicializados
+     * @return Map dos headers que foram inicializados
+     */
     protected Map<String, String> initHeaders(Map<String, String> headers) {
 
         headers.put(ITSAPP_DEVICE, ANDROIDPHONE);           //TODO: podias ter usado keys, pessoalmente não gosto de ver strings no meio do código
@@ -112,30 +116,18 @@ public class MainActivity extends AppCompatActivity {
         return headers;
     }
 
-    @SuppressLint("DefaultLocale")
+    /**
+     * Este metodo cria o UI desta actividade assim como o preenche com os valores necessarios
+     * @param result Lista com os valores de text/imagem para o UI
+     */
     private void initUI(List<ResponseContent.ResponseContentResult> result) {
 
         long timeElapsedStart_Get = request_response_get_timer - request_start_timer;
-        timerTv.setText(
-                String.format("Time to get response: %d", timeElapsedStart_Get));   //TODO: devias ter todas as strings no resources
+        timerTv.setText(getString(R.string.timerTv_message,timeElapsedStart_Get));   //TODO: devias ter todas as strings no resources
 
         RecyclerView recyclerView = initRecyclerView(result);
 
         initDots(recyclerView);
-
-    }
-
-    private RecyclerView initRecyclerView(List<ResponseContent.ResponseContentResult> result){
-        final RecyclerView recyclerView = findViewById(R.id.viewPagerContent);
-        final Adapter viewHolderAdapter =
-                new Adapter(MainActivity.this, R.layout.content, result, result.size());
-
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this,
-                LinearLayoutManager.HORIZONTAL,
-                false);
-
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(viewHolderAdapter);
 
         final SnapHelper snapHelper = new LinearSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
@@ -160,10 +152,33 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    /**
+     * Este metodo inicia o RecyclerView
+     * @param result valores a ser usados como items do RecyclerView
+     * @return RecyclerView inicializado com Adapter e LayoutManager
+     */
+    private RecyclerView initRecyclerView(List<ResponseContent.ResponseContentResult> result){
+        final RecyclerView recyclerView = findViewById(R.id.viewPagerContent);
+        final Adapter viewHolderAdapter =
+                new Adapter(MainActivity.this, R.layout.content, result, result.size());
+
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this,
+                LinearLayoutManager.HORIZONTAL,
+                false);
+
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(viewHolderAdapter);
+
         return recyclerView;
 
     }
 
+    /**
+     * Adição dos DOTS ao recyclerView
+     * @param recyclerView RecyclerView a ser usado
+     */
     private void initDots(RecyclerView recyclerView) {
 
         LinearLayout sliderDot = findViewById(R.id.SliderDots);
@@ -193,12 +208,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Criação do json para o POST Request
+     * @return JsonObject
+     */
     protected JsonObject jsonToSend() {
         ContentToSend contentToSend = new ContentToSend("MARKETING");
         Gson gson = new Gson();
         return new JsonParser().parse(gson.toJson(contentToSend)).getAsJsonObject();
     }
 
+    /**
+     * Execução/Inicialização do request
+     * @param headers Headers do POST Request
+     */
     protected void performRequest(Map<String, String> headers) {
 
         call = request.getContent(headers, jsonToSend());
