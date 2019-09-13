@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
 import android.annotation.SuppressLint;
-import android.os.AsyncTask;
+
 import android.os.Bundle;
 
 import android.os.SystemClock;
@@ -19,19 +19,16 @@ import android.widget.TextView;
 import com.example.retrofit_montepio.ResponsePack.Objects.ContentToSend;
 import com.example.retrofit_montepio.ResponsePack.ResponseContent;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
-
 import retrofit2.Call;
 
 import retrofit2.Callback;
@@ -39,19 +36,47 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/* synchronous import
+import java.util.concurrent.ExecutionException;
+import java.io.IOException;
+import android.os.AsyncTask;
+ */
+
 
 public class MainActivity extends AppCompatActivity {
 
-    private ImageView[] dots;
+    private final static String ITSAPP_DEVICE = "ITSAPP-DEVICE";
+    private final static String ANDROIDPHONE = "ANDROIDPHONE";
 
-    private List<ResponseContent.ResponseContentResult> result;
+    private final static String ITSAPP_LANG_KEY = "ITSAPP-LANG";
+    private final static String ITSAPP_LANG_VALUE = "pt-PT";
+
+    private final static String ITSAPP_SO_KEY = "ITSAPP-SO";
+    private final static String ITSAPP_SO_VALUE = "24";
+
+    private final static String ITSAPP_VER_KEY = "ITSAPP-VER";
+    private final static String ITSAPP_VER_VALUE = "2.38";
+
+    private final static String MGAPPID_KEY = "MGAppID";
+    private final static String MGAPPID_VALUE = "Android-Mobile";
+
+    private final static String MGIP_KEY = "MGIP";
+    private final static String MGIP_VALUE = "192.168.102.23";
+
+    private final static String MGMDWVERSION_KEY = "MGMdwVersion";
+    private final static String MFMDWVERSION_VALUE = "5";
+
+    private final static String MGSCREEN_KEY = "MGScreen";
+    private final static String MGSCREEN_VALUE = "LoginFragment";
+
+    private ImageView[] dots;
 
     protected Call<ResponseContent> call;
     protected MyService.Request request;
 
     private long request_start_timer;
     private long request_response_get_timer;
-    private TextView Timer;
+    private TextView timerTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,9 +84,7 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        Timer = findViewById(R.id.Timer); //TODO: este nome está mal dado, isto não é um timer, é uma TextView, devias ter-lhe chamado p.e. timerTv
-
-        request_start_timer = SystemClock.elapsedRealtime();        //TODO: não foi aqui que iniciaste o request ;)
+        timerTv = findViewById(R.id.timerTv); //TODO: este nome está mal dado, isto não é um timer, é uma TextView, devias ter-lhe chamado p.e. timerTv
 
         Retrofit retrofit = new Retrofit.Builder().baseUrl(MyService.API_URL).
                 addConverterFactory(GsonConverterFactory.create()).build();
@@ -77,14 +100,14 @@ public class MainActivity extends AppCompatActivity {
     //TODO: podias ter usado o javadoc
     protected Map<String, String> initHeaders(Map<String, String> headers) {
 
-        headers.put("ITSAPP-DEVICE", "ANDROIDPHONE");           //TODO: podias ter usado keys, pessoalmente não gosto de ver strings no meio do código
-        headers.put("ITSAPP-LANG", "pt-PT");
-        headers.put("ITSAPP-SO", "24");
-        headers.put("ITSAPP-VER", "2.38");
-        headers.put("MGAppId", "Android-Mobile");
-        headers.put("MGIP", "192.168.102.23");
-        headers.put("MGMdwVersion", "5");
-        headers.put("MGScreen", "LoginFragment");
+        headers.put(ITSAPP_DEVICE, ANDROIDPHONE);           //TODO: podias ter usado keys, pessoalmente não gosto de ver strings no meio do código
+        headers.put(ITSAPP_LANG_KEY, ITSAPP_LANG_VALUE);
+        headers.put(ITSAPP_SO_KEY, ITSAPP_SO_VALUE);
+        headers.put(ITSAPP_VER_KEY, ITSAPP_VER_VALUE);
+        headers.put(MGAPPID_KEY, MGAPPID_VALUE);
+        headers.put(MGIP_KEY, MGIP_VALUE);
+        headers.put(MGMDWVERSION_KEY, MFMDWVERSION_VALUE);
+        headers.put(MGSCREEN_KEY, MGSCREEN_VALUE);
 
         return headers;
     }
@@ -93,10 +116,16 @@ public class MainActivity extends AppCompatActivity {
     private void initUI(List<ResponseContent.ResponseContentResult> result) {
 
         long timeElapsedStart_Get = request_response_get_timer - request_start_timer;
-        Timer.setText(
+        timerTv.setText(
                 String.format("Time to get response: %d", timeElapsedStart_Get));   //TODO: devias ter todas as strings no resources
 
+        RecyclerView recyclerView = initRecyclerView(result);
 
+        initDots(recyclerView);
+
+    }
+
+    private RecyclerView initRecyclerView(List<ResponseContent.ResponseContentResult> result){
         final RecyclerView recyclerView = findViewById(R.id.viewPagerContent);
         final Adapter viewHolderAdapter =
                 new Adapter(MainActivity.this, R.layout.content, result, result.size());
@@ -110,8 +139,6 @@ public class MainActivity extends AppCompatActivity {
 
         final SnapHelper snapHelper = new LinearSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
-
-        initDots(recyclerView);
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -132,15 +159,19 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        return recyclerView;
+
     }
 
     private void initDots(RecyclerView recyclerView) {
 
-        //assert(recyclerView != null);
-
         LinearLayout sliderDot = findViewById(R.id.SliderDots);
 
-        int dotsCount = (recyclerView.getAdapter()).getItemCount();     //TODO: devias validar sempre os null, aproveita as dicas do IDE
+        int dotsCount = 1;//TODO: devias validar sempre os null, aproveita as dicas do IDE
+
+        if(recyclerView.getAdapter()!=null)
+            dotsCount = recyclerView.getAdapter().getItemCount();
 
         dots = new ImageView[dotsCount];
 
@@ -168,10 +199,11 @@ public class MainActivity extends AppCompatActivity {
         return new JsonParser().parse(gson.toJson(contentToSend)).getAsJsonObject();
     }
 
-
     protected void performRequest(Map<String, String> headers) {
 
         call = request.getContent(headers, jsonToSend());
+
+        request_start_timer = SystemClock.elapsedRealtime();
 
         //synchronous request
         /*
@@ -209,19 +241,25 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(@NotNull Call<ResponseContent> call, @NotNull Response<ResponseContent> response) {
 
-                assert response.body() != null;
-                if (response.body().getResult().getContentResult() == null)
-                    System.exit(0);                         //TODO: não mates a app sem dar feedback ao user
-
-                final List<ResponseContent.ResponseContentResult> result =
-                        response.body().getResult().getContentResult();
-                request_response_get_timer = SystemClock.elapsedRealtime();
-                initUI(result);
+                if (response.body() == null)
+                {
+                    ((TextView) findViewById(R.id.description)) //TODO: não mates a app sem dar feedback ao user
+                            .setText(R.string.netWork_error_message);
+                    System.exit(0);
+                }
+                else {
+                    final List<ResponseContent.ResponseContentResult> result =
+                            response.body().getResult().getContentResult();
+                    request_response_get_timer = SystemClock.elapsedRealtime();
+                    initUI(result);
+                }
             }
 
             @Override
             public void onFailure(@NotNull Call<ResponseContent> call, @NotNull Throwable t) {
-                MainActivity.super.onRestart();
+                ((TextView) findViewById(R.id.description))
+                        .setText(R.string.netWork_error_message);
+                System.exit(0);
             }
         });
     }

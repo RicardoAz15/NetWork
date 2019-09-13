@@ -72,11 +72,10 @@ public class Adapter extends
 
     @Override
     public int getItemCount() {
-        if (contentResultList == null) {
-            return 0;
-        } else {
-            return contentResultList.size();
-        }
+       if(contentResultList == null)
+           return 0;
+       else
+           return contentResultList.size();
     }
 
     @Override

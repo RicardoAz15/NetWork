@@ -12,7 +12,7 @@
         android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/Timer"
+        android:id="@+id/timerTv"
         android:textAlignment="gravity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

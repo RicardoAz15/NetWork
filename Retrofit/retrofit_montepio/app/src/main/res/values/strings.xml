@@ -1,3 +1,8 @@
 <resources>
-    <string name="app_name">retrofit_montepio</string>
+    <string
+        name="app_name">retrofit_montepio
+    </string>
+
+    <string name="netWork_error_message">Não foi possível executar o pedido verifique a sua conexão e reinicie a aplicação</string>
+
 </resources>

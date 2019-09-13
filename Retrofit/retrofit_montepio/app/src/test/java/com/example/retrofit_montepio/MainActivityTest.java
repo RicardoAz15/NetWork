@@ -36,7 +36,6 @@ public class MainActivityTest {
         when(activity_to_test.initHeaders(actual)).thenReturn(expected);
     }
 
-
     @Test
     public void verifyPerformRequest(){
         doThrow(NullPointerException.class).when(activity_to_test).performRequest(actual);
